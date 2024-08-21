@@ -1,7 +1,7 @@
 import tkinter.filedialog
 import tkinter.messagebox
 from tkinter import *
-
+#------------------------------------------------ FUNCOES -------------------------------------------------------------
 def inicia_tab():
     tabela.insert(END,'ELEMENTO')
     tabela.itemconfig(END, {'bg': '#EE82EE'})
@@ -75,8 +75,6 @@ def ler_texto(texto,posicao):
     else:
         tipo = 'IDENTIFICADOR'
         return palavra, i, tipo
-
-
 
 def numeros_I_R(texto,posicao):
   tamanho = len(texto)-1
@@ -379,11 +377,15 @@ def atualiza_visao_t3(event):
 def atualiza_visao_(event):
     bloco.yview_moveto(numeros_l.yview()[0])
 
+#------------------------------------------ARRAYS ELEMENTOS-------------------------------------------------------------
+
 alfabeto = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','_']
 alfabeto_m = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']
 numeros=['0','1','2','3','4','5','6','7','8','9']
 reservadas= ['program','procedure','var','int','float','boolean','read','write','true','false','begin','end','if','then','else','while','do','or','div','and','not']
 simbolos = ['::=',':=',':','=','<','>','<=','>=',',','<>','+','-','*','[',']','{','}',';','.','_','(',')','/']
+
+#------------------------------------------ INTERFACE ------------------------------------------------------------------
 
 janela = Tk()
 janela.title("Analisador Lexico")
