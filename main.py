@@ -411,6 +411,8 @@ def multiple_yview_l(*args):
 
 scrollbar_l.config(command=multiple_yview_l)
 
+
+
 scrollbar = Scrollbar(janela,orient='vertical')
 scrollbar.grid(column=6,row=0,padx=0,pady=0,sticky=N+S)
 
