@@ -17,8 +17,7 @@ def ler_comentario(texto,posicao):
     if texto[i-1] == '{':
         while texto[i] != '}':
             if i == tamanho:
-                palavra = '{'
-                return palavra,posicao+1,'NÃO_FECHOU_COMENTARIO'
+                return palavra,i,'NÃO_FECHOU_COMENTARIO'
             else:
                 palavra = palavra + texto[i]
                 i = i + 1
@@ -392,34 +391,43 @@ janela.title("Analisador Lexico")
 janela.geometry("1000x400")
 janela.config(background='#BA55D3')
 
-bloco = Text(janela, width=60, height=20)
-bloco.grid(column=1,row=0,padx=5,pady=0)
-numeros_l = Text(janela,wrap='none', width=4, height=20,background='lightgrey',state='disabled')
-numeros_l.grid(column=0,row=0,padx=2,pady=0)
+
+
+scrollbar_l = Scrollbar(janela,orient='vertical')
+scrollbar_l.grid(column=0,row=0,padx=0,pady=0,sticky=N+S)
+
+bloco = Text(janela, width=60, height=20,yscrollcommand = scrollbar_l.set)
+bloco.grid(column=2,row=0,padx=5,pady=0)
+numeros_l = Text(janela,wrap='none', width=4, height=20,background='lightgrey',state='disabled',yscrollcommand = scrollbar_l.set)
+numeros_l.grid(column=1,row=0,padx=2,pady=0)
 numeros_l.config(state='normal')
 numeros_l.insert('1.0', '1')
 numeros_l.config(state='disabled')
 bloco.bind("<KeyRelease>", atualiza_linha)
-bloco.bind("<MouseWheel>", atualiza_visao)
-numeros_l.bind("<MouseWheel>", atualiza_visao_)
+
+def multiple_yview_l(*args):
+    bloco.yview(*args)
+    numeros_l.yview(*args)
+
+scrollbar_l.config(command=multiple_yview_l)
+
+scrollbar = Scrollbar(janela,orient='vertical')
+scrollbar.grid(column=6,row=0,padx=0,pady=0,sticky=N+S)
 
 
-tabela = Listbox(janela,height=20,width=20,borderwidth=2,)
-tabela.grid(column=2,row=0,ipadx=0,pady=0,stick=E)
-tabela2 = Listbox(janela,height=20,width=30,borderwidth=2)
-tabela2.grid(column=3,row=0,padx=0,pady=0)
-tabela3 = Listbox(janela,height=20,width=10,borderwidth=2)
-tabela3.grid(column=4,row=0,padx=0,pady=0)
+tabela = Listbox(janela,height=20,width=20,borderwidth=2,yscrollcommand = scrollbar.set)
+tabela.grid(column=3,row=0,ipadx=0,pady=0,stick=E)
+tabela2 = Listbox(janela,height=20,width=30,borderwidth=2,yscrollcommand = scrollbar.set)
+tabela2.grid(column=4,row=0,padx=0,pady=0)
+tabela3 = Listbox(janela,height=20,width=10,borderwidth=2,yscrollcommand = scrollbar.set)
+tabela3.grid(column=5,row=0,padx=0,pady=0)
 
-tabela.bind("<MouseWheel>", atualiza_visao_t1)
-tabela2.bind("<MouseWheel>", atualiza_visao_t2)
-tabela3.bind("<MouseWheel>", atualiza_visao_t3)
-tabela.bind("<KeyPress>", atualiza_visao_t1)
-tabela2.bind("<KeyPress>", atualiza_visao_t2)
-tabela3.bind("<KeyPress>", atualiza_visao_t3)
-tabela.bind("<KeyRelease>", atualiza_visao_t1)
-tabela2.bind("<KeyRelease>", atualiza_visao_t2)
-tabela3.bind("<KeyRelease>", atualiza_visao_t3)
+def multiple_yview(*args):
+    tabela.yview(*args)
+    tabela2.yview(*args)
+    tabela3.yview(*args)
+
+scrollbar.config( command = multiple_yview )
 
 botao = Button(janela, text="Analisar", command = imprimirAnalise)
 botao.grid(column=3, row=1, padx=0, pady=5)
