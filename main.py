@@ -350,32 +350,6 @@ def atualiza_linha(event):
     numeros_l.yview_moveto(bloco.yview()[0])
     numeros_l.config(state='disabled')
 
-def atualiza_visao(event):
-    numeros_l.config(state='normal')
-    numeros_l.yview_moveto(bloco.yview()[0])
-    numeros_l.config(state='disabled')
-
-def atualiza_visao_t1(event):
-    tabela2.yview_moveto(tabela.yview()[0])
-    tabela2.yview_moveto(tabela3.yview()[0])
-    tabela3.yview_moveto(tabela2.yview()[0])
-    tabela3.yview_moveto(tabela.yview()[0])
-
-def atualiza_visao_t2(event):
-    tabela.yview_moveto(tabela3.yview()[0])
-    tabela.yview_moveto(tabela2.yview()[0])
-    tabela3.yview_moveto(tabela.yview()[0])
-    tabela3.yview_moveto(tabela2.yview()[0])
-
-def atualiza_visao_t3(event):
-    tabela.yview_moveto(tabela2.yview()[0])
-    tabela.yview_moveto(tabela3.yview()[0])
-    tabela2.yview_moveto(tabela.yview()[0])
-    tabela2.yview_moveto(tabela3.yview()[0])
-
-def atualiza_visao_(event):
-    bloco.yview_moveto(numeros_l.yview()[0])
-
 #------------------------------------------ARRAYS ELEMENTOS-------------------------------------------------------------
 
 alfabeto = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','_']
