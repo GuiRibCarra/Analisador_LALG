@@ -364,12 +364,8 @@ janela = Tk()
 janela.title("Analisador Lexico")
 janela.geometry("1000x400")
 janela.config(background='#BA55D3')
-
-
-
 scrollbar_l = Scrollbar(janela,orient='vertical')
 scrollbar_l.grid(column=0,row=0,padx=0,pady=0,sticky=N+S)
-
 bloco = Text(janela, width=60, height=20,yscrollcommand = scrollbar_l.set)
 bloco.grid(column=2,row=0,padx=5,pady=0)
 numeros_l = Text(janela,wrap='none', width=4, height=20,background='lightgrey',state='disabled',yscrollcommand = scrollbar_l.set)
@@ -385,12 +381,8 @@ def multiple_yview_l(*args):
 
 scrollbar_l.config(command=multiple_yview_l)
 
-
-
 scrollbar = Scrollbar(janela,orient='vertical')
 scrollbar.grid(column=6,row=0,padx=0,pady=0,sticky=N+S)
-
-
 tabela = Listbox(janela,height=20,width=20,borderwidth=2,yscrollcommand = scrollbar.set)
 tabela.grid(column=3,row=0,ipadx=0,pady=0,stick=E)
 tabela2 = Listbox(janela,height=20,width=30,borderwidth=2,yscrollcommand = scrollbar.set)
@@ -404,7 +396,6 @@ def multiple_yview(*args):
     tabela3.yview(*args)
 
 scrollbar.config( command = multiple_yview )
-
 botao = Button(janela, text="Analisar", command = imprimirAnalise)
 botao.grid(column=3, row=1, padx=0, pady=5)
 
