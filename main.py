@@ -374,6 +374,8 @@ numeros_l.config(state='normal')
 numeros_l.insert('1.0', '1')
 numeros_l.config(state='disabled')
 bloco.bind("<KeyRelease>", atualiza_linha)
+bloco.bind("<KeyPress>", atualiza_linha)
+bloco.bind("<MouseWheel>", )
 
 def multiple_yview_l(*args):
     bloco.yview(*args)
