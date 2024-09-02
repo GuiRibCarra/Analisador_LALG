@@ -43,7 +43,6 @@ def abrir_arq():
         arq_a = open(arq,'r')
         conteudo = arq_a.read()
         bloco.insert(END,conteudo)
-
     else:
         tkinter.messagebox.showerror(title="ERROR",message="Tipo de Arquivo selecinado não é .txt, selecione novamente")
         print('erro')
@@ -350,6 +349,18 @@ def atualiza_linha(event):
     numeros_l.yview_moveto(bloco.yview()[0])
     numeros_l.config(state='disabled')
 
+def multiple_yview(*args):
+    tabela.yview(*args)
+    tabela2.yview(*args)
+    tabela3.yview(*args)
+
+def multiple_yview_l(*args):
+    bloco.yview(*args)
+    numeros_l.yview(*args)
+
+def scrollwheel(event):
+    return 'break'
+
 #------------------------------------------ARRAYS ELEMENTOS-------------------------------------------------------------
 
 alfabeto = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','_']
@@ -364,24 +375,25 @@ janela = Tk()
 janela.title("Analisador Lexico")
 janela.geometry("1000x400")
 janela.config(background='#BA55D3')
+
 scrollbar_l = Scrollbar(janela,orient='vertical')
 scrollbar_l.grid(column=0,row=0,padx=0,pady=0,sticky=N+S)
 bloco = Text(janela, width=60, height=20,yscrollcommand = scrollbar_l.set)
 bloco.grid(column=2,row=0,padx=5,pady=0)
+bloco.bind("<KeyRelease>", atualiza_linha)
+bloco.bind("<KeyPress>", atualiza_linha)
+bloco.bind('<MouseWheel>', scrollwheel)
+bloco.bind('<Enter>', atualiza_linha)
+bloco.bind('<Leave>', atualiza_linha)
+
 numeros_l = Text(janela,wrap='none', width=4, height=20,background='lightgrey',state='disabled',yscrollcommand = scrollbar_l.set)
 numeros_l.grid(column=1,row=0,padx=2,pady=0)
 numeros_l.config(state='normal')
 numeros_l.insert('1.0', '1')
 numeros_l.config(state='disabled')
-bloco.bind("<KeyRelease>", atualiza_linha)
-bloco.bind("<KeyPress>", atualiza_linha)
-
-def multiple_yview_l(*args):
-    bloco.yview(*args)
-    numeros_l.yview(*args)
+numeros_l.bind('<MouseWheel>', scrollwheel)
 
 scrollbar_l.config(command=multiple_yview_l)
-
 scrollbar = Scrollbar(janela,orient='vertical')
 scrollbar.grid(column=6,row=0,padx=0,pady=0,sticky=N+S)
 tabela = Listbox(janela,height=20,width=20,borderwidth=2,yscrollcommand = scrollbar.set)
@@ -391,10 +403,9 @@ tabela2.grid(column=4,row=0,padx=0,pady=0)
 tabela3 = Listbox(janela,height=20,width=10,borderwidth=2,yscrollcommand = scrollbar.set)
 tabela3.grid(column=5,row=0,padx=0,pady=0)
 
-def multiple_yview(*args):
-    tabela.yview(*args)
-    tabela2.yview(*args)
-    tabela3.yview(*args)
+tabela.bind('<MouseWheel>', scrollwheel)
+tabela2.bind('<MouseWheel>', scrollwheel)
+tabela3.bind('<MouseWheel>', scrollwheel)
 
 scrollbar.config( command = multiple_yview )
 botao = Button(janela, text="Analisar", command = imprimirAnalise)
