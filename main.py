@@ -445,7 +445,8 @@ def bloco_(index):
     if token == 'PALAVRA RESERVADA INT' or token == 'PALAVRA RESERVADA BOOLEAN':
         i_lexemas = parte_declaracao_variaveis(i_lexemas-1)
     if token == 'PALAVRA RESERVADA PROCEDURE':
-        a=0
+        i_lexemas = parte_de_declaracao_de_subrotina(i_lexemas - 1)
+    i_lexemas = comando_composto(i_lexemas)
     return i_lexemas
 
 
@@ -500,6 +501,300 @@ def parte_declaracao_variaveis(index):
                 break
     return i_lexemas
                 
+def secao_de_parametros_formais(index):
+    token, i_lexemas = obter_token(index)
+    if token == 'PALAVRA RESERVADA VAR':
+        i_lexemas = lista_de_identificadores(i_lexemas)
+        token, i_lexemas = obter_token(i_lexemas)
+        if token == '2PONTOS':
+            token, i_lexemas = obter_token(i_lexemas)
+            if token == "IDENTIFICADOR":
+                return i_lexemas
+            else:
+                sintatico.insert(END, 'Falta o identificador final')
+        else:
+            sintatico.insert(END, 'Falta o ":" ')
+            return i_lexemas+1
+    else:
+        i_lexemas = lista_de_identificadores(i_lexemas-1)
+        token, i_lexemas = obter_token(i_lexemas)
+        if token == '2PONTOS':
+            token, i_lexemas = obter_token(i_lexemas)
+            if token == "IDENTIFICADOR":
+                return i_lexemas
+
+    return i_lexemas
+
+
+def parametros_formais(index):
+    token, i_lexemas = obter_token(index)
+    if token == 'ABRE_PARENTESES':
+        i_lexemas = secao_de_parametros_formais(i_lexemas)
+        token, i_lexemas = obter_token(i_lexemas)
+        while True:
+            if token == 'OP_PONTO_VIRGULA':
+                i_lexemas = secao_de_parametros_formais(i_lexemas)
+                token, i_lexemas = obter_token(i_lexemas)
+                if token != 'FECHA_PARENTESES':
+                    break
+            else:
+                sintatico.insert(END, 'Falta o ";" ')
+        if token == 'FECHA_PARENTESES':
+            return i_lexemas
+        else:
+            sintatico.insert(END, 'Falta o ")" ')
+    else:
+        sintatico.insert(END, 'Falta o "(" ')
+    return i_lexemas
+
+def declaracao_de_procedimento(index):
+    token, i_lexemas = obter_token(index)
+    if token == 'PALAVRA RESERVADA PROCEDURE':
+        token, i_lexemas = obter_token(i_lexemas)
+        if token == 'IDENTIFICADOR':
+            token, i_lexemas = obter_token(i_lexemas)
+            if token == 'ABRE_PARENTESES':
+                i_lexemas = parametros_formais(i_lexemas-1)
+                token, i_lexemas = obter_token(i_lexemas)
+                if token == 'OP_PONTO_VIRGULA':
+                    i_lexemas = bloco_(i_lexemas)
+                else:
+                    sintatico.insert(END, 'Falta o ";" ')
+            elif token == 'OP_PONTO_VIRGULA':
+                i_lexemas = bloco_(i_lexemas)
+            else:
+                sintatico.insert(END, 'Falta o ";" ')
+        else:
+            sintatico.insert(END, 'Falta o identificador ')
+
+    return i_lexemas
+
+def parte_de_declaracao_de_subrotina(index):
+    token, i_lexemas = obter_token(index)
+    if token != 'PALAVRA RESERVADA PROCEDURE':
+        return i_lexemas-1
+    else:
+        while True:
+            if token == 'PALAVRA RESERVADA PROCEDURE':
+                i_lexemas = declaracao_de_procedimento(i_lexemas-1)
+                token, i_lexemas = obter_token(i_lexemas)
+                if token == 'OP_PONTO_VIRGULA':
+                    token2, i_lexemas2 = obter_token(i_lexemas)
+                    if token2 != 'PALAVRA RESERVADA PROCEDURE':
+                        break
+                    else:
+                        token, i_lexemas = obter_token(i_lexemas)
+        return i_lexemas
+
+def relacao(index):
+    token, i_lexemas = obter_token(index)
+    if token == 'MENOR_IGUAL':
+        return i_lexemas
+    elif token == 'MENOR_MAIOR':
+        return i_lexemas
+    elif token == 'MENOR':
+        return i_lexemas
+    elif token == 'MAIOR_IGUAL':
+        return i_lexemas
+    elif token == 'MAIOR':
+        return i_lexemas
+    elif token == 'OP_IGUAL':
+        return i_lexemas
+    else:
+        sintatico.insert(END, 'Falta o operando de relação ')
+        return i_lexemas
+
+def variavel(index):
+    token, i_lexemas = obter_token(index)
+    if token == 'IDENTIFICADOR':
+        token, i_lexemas = obter_token(i_lexemas)
+        if token == 'ABRE_COLCHETES':
+            i_lexemas = expressao(i_lexemas)
+            if token == 'FECHA_COLCHETES':
+                return i_lexemas
+            else:
+                sintatico.insert(END, 'Falta o "]" ')
+        else:
+            return i_lexemas
+    else:
+        sintatico.insert(END, 'Falta o identificador ')
+    return i_lexemas
+
+def fator(index):
+    token, i_lexemas = obter_token(index)
+    if token == "IDENTIFICADOR":
+        variavel(index)
+        return i_lexemas
+    elif token == 'NUMERO':
+        return i_lexemas
+    elif token == 'ABRE_PARENTESES':
+        i_lexemas = expressao(i_lexemas)
+        token, i_lexemas = obter_token(i_lexemas)
+        if token == 'FECHA_PARENTESES':
+            return i_lexemas
+        else:
+            sintatico.insert(END, 'Falta o ")" ')
+    elif token == 'PALAVRA RESERVADA NOT':
+        fator(i_lexemas)
+        return i_lexemas
+    else:
+        sintatico.insert(END, 'Falta o fator corretamente ')
+    return i_lexemas
+
+def termo(index):
+    i_lexemas = fator(index)
+    token, i_lexemas = obter_token(i_lexemas)
+    while True:
+        if token == 'OP_MULTIPLICACAO' or token == 'PALAVRA RESERVADA DIV' or token == 'PALAVRA RESERVADA AND':
+            i_lexemas = fator(index)
+            token, i_lexemas = obter_token(i_lexemas)
+        else:
+            break
+    return i_lexemas
+
+def expressao_simples(index):
+    token, i_lexemas = obter_token(index)
+    if token == "OP_SOMA" or token == 'OP_SUBTRACAO':
+        i_lexemas = termo(i_lexemas)
+        token, i_lexemas = obter_token(i_lexemas)
+        while True:
+            if token == 'OP_SOMA' or token == 'OP_SUBTRACAO' or token == 'PALAVRA RESERVADA OR':
+                i_lexemas = termo(index)
+                token, i_lexemas = obter_token(i_lexemas)
+            else:
+                break
+        return i_lexemas
+    else:
+        i_lexemas = termo(index)
+        token, i_lexemas = obter_token(i_lexemas)
+        while True:
+            if token == 'OP_SOMA' or token == 'OP_SUBTRACAO' or token == 'PALAVRA RESERVADA OR':
+                i_lexemas = termo(index)
+                token, i_lexemas = obter_token(i_lexemas)
+            else:
+                break
+        return i_lexemas
+
+def expressao(index):
+    i_lexemas = expressao_simples(index)
+    token, i_lexemas = obter_token(i_lexemas)
+    if token in 'MENOR' or token in 'MAIOR' or token in 'IGUAL':
+        i_lexemas = relacao(i_lexemas-1)
+        i_lexemas = expressao_simples(i_lexemas)
+
+    return i_lexemas
+
+def lista_expressao(index):
+    i_lexemas = expressao(index)
+    token,i_lexemas = obter_token(i_lexemas)
+    while True:
+        if token == 'OP_VIRGULA':
+            i_lexemas = expressao(i_lexemas)
+            token, i_lexemas = obter_token(i_lexemas)
+        else:
+            break
+    return i_lexemas
+
+def atribuicao(index):
+    i_lexemas = variavel(index)
+    token,i_lexemas = obter_token(i_lexemas)
+    if token == '2P_IGUAL':
+        i_lexemas = expressao(i_lexemas)
+        return i_lexemas
+    else:
+        sintatico.insert(END, 'Falta o := ')
+        i_lexemas = expressao(i_lexemas+1)
+        return i_lexemas
+
+def chamada_de_procedimento(index):
+    token, i_lexemas = obter_token(index)
+    if token == "IDENTIFICADOR":
+        token, i_lexemas = obter_token(i_lexemas)
+        if token == 'ABRE_PARENTESES':
+            i_lexemas = lista_expressao(i_lexemas)
+            token, i_lexemas = obter_token(i_lexemas)
+            if token == 'FECHA_PARENTESES':
+                return i_lexemas
+            else:
+                sintatico.insert(END, 'Falta fechar o parenteses')
+                return i_lexemas
+    else:
+        sintatico.insert(END, 'Esta faltando o identificador')
+        token, i_lexemas = obter_token(i_lexemas)
+        if token == 'ABRE_PARENTESES':
+            i_lexemas = lista_expressao(i_lexemas)
+            token, i_lexemas = obter_token(i_lexemas)
+            if token == 'FECHA_PARENTESES':
+                return i_lexemas
+            else:
+                sintatico.insert(END, 'Falta fechar o parenteses')
+        return i_lexemas
+
+def IF(index):
+    token, i_lexemas = obter_token(index)
+    if token == 'PALAVRA RESERVADA IF':
+        i_lexemas = expressao(i_lexemas)
+        token,i_lexemas = obter_token(i_lexemas)
+        if token == 'PALAVRA RESERVADA THEN':
+            i_lexemas = comando(i_lexemas)
+            token, i_lexemas = obter_token(i_lexemas)
+            if token == 'PALAVRA RESERVADA ELSE':
+                i_lexemas = comando(i_lexemas)
+            return i_lexemas
+        else:
+            sintatico.insert(END, 'Falta o THEN')
+            i_lexemas = comando(i_lexemas)
+            token, i_lexemas = obter_token(i_lexemas)
+            if token == 'PALAVRA RESERVADA ELSE':
+                i_lexemas = comando(i_lexemas)
+            return i_lexemas
+    else:
+        sintatico.insert(END, 'Falta o IF')
+
+    return i_lexemas
+
+def WHILE(index):
+    token, i_lexemas = obter_token(index)
+    if token == 'PALAVRA RESERVADA WHILE':
+        i_lexemas = expressao(i_lexemas)
+        token, i_lexemas = obter_token(i_lexemas)
+        if token == 'PALAVRA RESERVADA DO':
+            i_lexemas = comando(i_lexemas)
+        else:
+            sintatico.insert(END, 'Falta o DO')
+    else:
+        sintatico.insert(END, 'Falta o While')
+
+def comando(index):
+    i_lexemas = atribuicao(index)
+    token,i_lexemas = obter_token(i_lexemas)
+    if token == 'IDENTIFICADOR':
+        i_lexemas = chamada_de_procedimento(i_lexemas-1)
+    elif token == 'PALAVRA RESERVADA BEGIN':
+        i_lexemas = comando_composto(i_lexemas - 1)
+    elif token == 'PALAVRA RESERVADA IF':
+        i_lexemas = IF(i_lexemas)
+    elif token == 'PALAVRA RESERVADA WHILE':
+        i_lexemas = WHILE(i_lexemas)
+    return i_lexemas
+
+def comando_composto(index):
+    token, i_lexemas = obter_token(index)
+    if token == 'PALAVRA RESERVADA BEGIN':
+        i_lexemas = comando(i_lexemas)
+        while True:
+            token, i_lexemas = obter_token(i_lexemas)
+            if token == 'OP_PONTO_VIRGULA':
+                i_lexemas = comando(i_lexemas)
+            else:
+                break
+        token, i_lexemas = obter_token(i_lexemas)
+        if token == 'PALAVRA RESERVADA END':
+            return i_lexemas
+        else:
+            sintatico.insert(END, 'Falta o END')
+            return i_lexemas
+
 
 #------------------------------------------ INTERFACE ------------------------------------------------------------------
 
