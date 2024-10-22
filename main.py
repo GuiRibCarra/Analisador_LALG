@@ -766,12 +766,15 @@ def WHILE(index):
         sintatico.insert(END, 'Falta o While')
 
 def comando(index):
-    i_lexemas = atribuicao(index)
-    token,i_lexemas = obter_token(i_lexemas)
+    token,i_lexemas = obter_token(index)
     if token == 'IDENTIFICADOR':
-        i_lexemas = chamada_de_procedimento(i_lexemas-1)
+        token2,i_lexemas2 = obter_token(i_lexemas)
+        if token2 == '2P_IGUAL':
+            i_lexemas = atribuicao(index)
+        else:
+            i_lexemas = chamada_de_procedimento(i_lexemas)
     elif token == 'PALAVRA RESERVADA BEGIN':
-        i_lexemas = comando_composto(i_lexemas - 1)
+        i_lexemas = comando_composto(i_lexemas)
     elif token == 'PALAVRA RESERVADA IF':
         i_lexemas = IF(i_lexemas)
     elif token == 'PALAVRA RESERVADA WHILE':
@@ -794,6 +797,162 @@ def comando_composto(index):
         else:
             sintatico.insert(END, 'Falta o END')
             return i_lexemas
+
+def sinc(index,tipo):
+    if tipo == 'PROGRAM':
+        token, i_lexemas = obter_token(index)
+        while True:
+            if token == 'PALAVRA RESERVADA INT' or token == 'PALAVRA RESERVADA BOOLEAN':
+                bloco_(i_lexemas)
+                break
+            elif token == 'PALAVRA RESERVADA PROCEDURE':
+                bloco_(i_lexemas)
+                break
+            elif token == 'PALAVRA RESERVADA BEGIN':
+                bloco_(i_lexemas)
+                break
+            else:
+                token, i_lexemas = obter_token(i_lexemas)
+
+    elif tipo == 'PARTE DECLARAÇÃO VARIAVEIS':
+        token, i_lexemas = obter_token(index)
+        while True:
+            if token == 'PALAVRA RESERVADA PROCEDURE':
+                parte_de_declaracao_de_subrotina(i_lexemas)
+                break
+            elif token == 'PALAVRA RESERVADA BEGIN':
+                comando_composto(i_lexemas)
+                break
+            elif token == 'OP_PONTO':
+                break
+            else:
+                token, i_lexemas = obter_token(i_lexemas)
+
+    elif tipo == 'PARTE DECLARAÇÃO ROTINAS':
+        token, i_lexemas = obter_token(index)
+        while True:
+            if token == 'PALAVRA RESERVADA BEGIN':
+                comando_composto(i_lexemas)
+                break
+            elif token == 'OP_PONTO':
+                break
+            else:
+                token, i_lexemas = obter_token(i_lexemas)
+
+    elif tipo == 'DECLARAÇÃO DE VARIAVEIS':
+        token, i_lexemas = obter_token(index)
+        while True:
+            if token == 'OP_PONTO_VIRGULA':
+                token2, i_lexemas2 = obter_token(i_lexemas+1)
+                if token == 'PALAVRA RESERVADA INT' or token == 'PALAVRA RESERVADA BOOLEAN':
+                    declaracao_variaveis(i_lexemas)
+                elif token == 'PALAVRA RESERVADA PROCEDURE':
+                    parte_de_declaracao_de_subrotina(i_lexemas)
+                    break
+                elif token == 'PALAVRA RESERVADA BEGIN':
+                    comando_composto(i_lexemas)
+                    break
+            elif token == 'OP_PONTO':
+                break
+            else:
+                token, i_lexemas = obter_token(i_lexemas)
+
+    elif tipo == 'LISTA IDENTIFICADORES':
+        token, i_lexemas = obter_token(index)
+        while True:
+            if token == 'OP_VIRGULA':
+                lista_de_identificadores(i_lexemas)
+                break
+            if token == 'OP_PONTO_VIRGULA':
+                token2, i_lexemas2 = obter_token(i_lexemas+1)
+                if token2 == 'PALAVRA RESERVADA INT' or token2 == 'PALAVRA RESERVADA BOOLEAN':
+                    declaracao_variaveis(i_lexemas)
+                elif token2 == 'PALAVRA RESERVADA PROCEDURE':
+                    parte_de_declaracao_de_subrotina(i_lexemas)
+                    break
+                elif token2 == 'PALAVRA RESERVADA BEGIN':
+                    comando_composto(i_lexemas)
+                    break
+            else:
+                token, i_lexemas = obter_token(i_lexemas)
+
+    elif tipo == 'DECLARAÇÃO DE PROCEDIMENTO':
+        token, i_lexemas = obter_token(index)
+        while True:
+            if token == 'OP_PONTO_VIRGULA':
+                parte_de_declaracao_de_subrotina(i_lexemas)
+                break
+            elif token == 'PALAVRA RESERVADA BEGIN':
+                comando_composto(i_lexemas)
+                break
+            else:
+                token, i_lexemas = obter_token(i_lexemas)
+
+    elif tipo == 'PARAMETROS FORMAIS':
+        token, i_lexemas = obter_token(index)
+        while True:
+            if token == 'OP_PONTO_VIRGULA':
+                token2,i_lexemas2 = obter_token(i_lexemas)
+                if token2 == 'PALAVRA RESERVADA INT' or token2 == 'PALAVRA RESERVADA BOOLEAN' or token2 == 'PALAVRA RESERVADA PROCEDURE':
+                    i_lexemas = bloco_(i_lexemas)
+                else:
+                    i_lexemas = secao_de_parametros_formais(i_lexemas)
+            else:
+                token, i_lexemas = obter_token(i_lexemas)
+
+    elif tipo == 'SECAO DE PARAMETROS FORMAIS':
+        token, i_lexemas = obter_token(index)
+        while True:
+            if token == 'OP_PONTO_VIRGULA':
+                i_lexemas = secao_de_parametros_formais(i_lexemas)
+            elif token == 'FECHA_PARENTESES':
+                i_lexemas = bloco_(i_lexemas+1)
+            else:
+                token, i_lexemas = obter_token(i_lexemas)
+
+    elif tipo == 'COMANDO COMPOSTO':
+        token, i_lexemas = obter_token(index)
+        while True:
+            if token == 'OP_PONTO_VIRGULA':
+                token2, i_lexemas2 = obter_token(i_lexemas)
+                if token2 == 'PALAVRA RESERVADA PROCEDURE':
+                    i_lexemas = parte_de_declaracao_de_subrotina(i_lexemas)
+                else:
+                    i_lexemas = comando(i_lexemas)
+            elif token == 'OP_PONTO':
+                i_lexemas = len(lexemas)
+
+    elif tipo == 'COMANDO':
+        token, i_lexemas = obter_token(index)
+
+    elif tipo == 'ATRIBUIÇÃO':
+        token, i_lexemas = obter_token(index)
+
+    elif tipo == 'CHAMADA DE PROCEDIMENTO':
+        token, i_lexemas = obter_token(index)
+
+    elif tipo == 'IF':
+        token, i_lexemas = obter_token(index)
+
+    elif tipo == 'WHILE':
+        token, i_lexemas = obter_token(index)
+
+    elif tipo == 'EXPRESSAO':
+        token, i_lexemas = obter_token(index)
+
+    elif tipo == 'EXPRESSAO SIMPLES':
+        token, i_lexemas = obter_token(index)
+
+    elif tipo == 'TERMO':
+        token, i_lexemas = obter_token(index)
+
+    elif tipo == 'FATOR':
+        token, i_lexemas = obter_token(index)
+
+    elif tipo == 'VARIAVEL':
+        token, i_lexemas = obter_token(index)
+
+
 
 
 #------------------------------------------ INTERFACE ------------------------------------------------------------------
