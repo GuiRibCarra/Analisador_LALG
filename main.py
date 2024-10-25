@@ -921,36 +921,211 @@ def sinc(index,tipo):
                     i_lexemas = comando(i_lexemas)
             elif token == 'OP_PONTO':
                 i_lexemas = len(lexemas)
+            else:
+                token, i_lexemas = obter_token(i_lexemas)
 
     elif tipo == 'COMANDO':
         token, i_lexemas = obter_token(index)
+        while True:
+            if token == 'OP_PONTO_VIRGULA':
+                comando(i_lexemas)
+            elif token == 'PALAVRA RESERVADA ELSE':
+                comando(i_lexemas+1)
+            else:
+                token, i_lexemas = obter_token(i_lexemas)
+
 
     elif tipo == 'ATRIBUIÇÃO':
         token, i_lexemas = obter_token(index)
+        while True:
+            if token == 'IDENTIFICADOR':
+                token2,i_lexemas2 = obter_token(i_lexemas)
+                if token2 == 'ABRE_PARENTESES':
+                    chamada_de_procedimento(i_lexemas)
+                else:
+                    atribuicao(i_lexemas)
+            elif token == 'PALAVRA RESERVADA BEGIN':
+                comando_composto(i_lexemas)
+            elif token == 'PALAVRA RESERVADA IF':
+                IF(i_lexemas)
+            elif token == 'PALAVRA RESERVADA WHILE':
+                WHILE(i_lexemas)
+            else:
+                token, i_lexemas = obter_token(i_lexemas)
+
 
     elif tipo == 'CHAMADA DE PROCEDIMENTO':
         token, i_lexemas = obter_token(index)
+        while True:
+            if token == 'IDENTIFICADOR':
+                token2,i_lexemas2 = obter_token(i_lexemas)
+                if token2 == 'ABRE_PARENTESES':
+                    chamada_de_procedimento(i_lexemas)
+                else:
+                    atribuicao(i_lexemas)
+            elif token == 'PALAVRA RESERVADA BEGIN':
+                comando_composto(i_lexemas)
+            elif token == 'PALAVRA RESERVADA IF':
+                IF(i_lexemas)
+            elif token == 'PALAVRA RESERVADA WHILE':
+                WHILE(i_lexemas)
+            else:
+                token, i_lexemas = obter_token(i_lexemas)
+
 
     elif tipo == 'IF':
         token, i_lexemas = obter_token(index)
+        while True:
+            if token == 'IDENTIFICADOR':
+                token2,i_lexemas2 = obter_token(i_lexemas)
+                if token2 == 'ABRE_PARENTESES':
+                    chamada_de_procedimento(i_lexemas)
+                else:
+                    atribuicao(i_lexemas)
+            elif token == 'PALAVRA RESERVADA BEGIN':
+                comando_composto(i_lexemas)
+            elif token == 'PALAVRA RESERVADA IF':
+                IF(i_lexemas)
+            elif token == 'PALAVRA RESERVADA WHILE':
+                WHILE(i_lexemas)
+            else:
+                token, i_lexemas = obter_token(i_lexemas)
 
     elif tipo == 'WHILE':
         token, i_lexemas = obter_token(index)
+        while True:
+            if token == 'IDENTIFICADOR':
+                token2,i_lexemas2 = obter_token(i_lexemas)
+                if token2 == 'ABRE_PARENTESES':
+                    chamada_de_procedimento(i_lexemas)
+                else:
+                    atribuicao(i_lexemas)
+            elif token == 'PALAVRA RESERVADA BEGIN':
+                comando_composto(i_lexemas)
+            elif token == 'PALAVRA RESERVADA IF':
+                IF(i_lexemas)
+            elif token == 'PALAVRA RESERVADA WHILE':
+                WHILE(i_lexemas)
+            else:
+                token, i_lexemas = obter_token(i_lexemas)
 
     elif tipo == 'EXPRESSAO':
         token, i_lexemas = obter_token(index)
+        while True:
+            if token == 'IDENTIFICADOR':
+                token2,i_lexemas2 = obter_token(i_lexemas)
+                if token2 == 'ABRE_PARENTESES':
+                    chamada_de_procedimento(i_lexemas)
+                else:
+                    atribuicao(i_lexemas)
+            elif token == 'PALAVRA RESERVADA BEGIN':
+                comando_composto(i_lexemas)
+            elif token == 'PALAVRA RESERVADA IF':
+                IF(i_lexemas)
+            elif token == 'PALAVRA RESERVADA WHILE':
+                WHILE(i_lexemas)
+            elif token == 'PALAVRA RESERVADA THEN' or token == 'PALAVRA RESERVADA DO':
+                comando(i_lexemas)
+                token2, i_lexemas2 = obter_token(i_lexemas)
+                if token2 == 'PALAVRA RESERVADA ELSE':
+                    comando(i_lexemas2)
+            elif token == 'OP_VIRGULA':
+                lista_expressao(i_lexemas)
+            else:
+                token, i_lexemas = obter_token(i_lexemas)
+
 
     elif tipo == 'EXPRESSAO SIMPLES':
         token, i_lexemas = obter_token(index)
+        while True:
+            if token == 'MAIOR' or token == 'MENOR' or token == 'MAIOR_IGUAL' or token == 'MENOR_IGUAL' or token == 'MENOR_MAIOR' or token == 'OP_IGUAL':
+                relacao(i_lexemas)
+
+            elif token == 'IDENTIFICADOR':
+                token2,i_lexemas2 = obter_token(i_lexemas)
+                if token2 == 'ABRE_PARENTESES':
+                    chamada_de_procedimento(i_lexemas)
+                else:
+                    atribuicao(i_lexemas)
+            elif token == 'PALAVRA RESERVADA BEGIN':
+                comando_composto(i_lexemas)
+            elif token == 'PALAVRA RESERVADA IF':
+                IF(i_lexemas)
+            elif token == 'PALAVRA RESERVADA WHILE':
+                WHILE(i_lexemas)
+            elif token == 'PALAVRA RESERVADA THEN' or token == 'PALAVRA RESERVADA DO':
+                comando(i_lexemas)
+                token2, i_lexemas2 = obter_token(i_lexemas)
+                if token2 == 'PALAVRA RESERVADA ELSE':
+                    comando(i_lexemas2)
+            elif token == 'OP_VIRGULA':
+                lista_expressao(i_lexemas)
+            else:
+                token, i_lexemas = obter_token(i_lexemas)
 
     elif tipo == 'TERMO':
         token, i_lexemas = obter_token(index)
+        while True:
+            if token == 'MAIOR' or token == 'MENOR' or token == 'MAIOR_IGUAL' or token == 'MENOR_IGUAL' or token == 'MENOR_MAIOR' or token == 'OP_IGUAL':
+                relacao(i_lexemas)
+
+            elif token == 'IDENTIFICADOR':
+                token2,i_lexemas2 = obter_token(i_lexemas)
+                if token2 == 'ABRE_PARENTESES':
+                    chamada_de_procedimento(i_lexemas)
+                else:
+                    atribuicao(i_lexemas)
+            elif token == 'PALAVRA RESERVADA BEGIN':
+                comando_composto(i_lexemas)
+            elif token == 'PALAVRA RESERVADA IF':
+                IF(i_lexemas)
+            elif token == 'PALAVRA RESERVADA WHILE':
+                WHILE(i_lexemas)
+            elif token == 'PALAVRA RESERVADA THEN' or token == 'PALAVRA RESERVADA DO':
+                comando(i_lexemas)
+                token2, i_lexemas2 = obter_token(i_lexemas)
+                if token2 == 'PALAVRA RESERVADA ELSE':
+                    comando(i_lexemas2)
+            elif token == 'OP_VIRGULA':
+                lista_expressao(i_lexemas)
+            elif token == 'OP_SOMA' or token == 'OP_SUBTRACAO' or token == 'PALAVRA RESERVADA OR':
+                termo(i_lexemas)
+            else:
+                token, i_lexemas = obter_token(i_lexemas)
 
     elif tipo == 'FATOR':
         token, i_lexemas = obter_token(index)
+        while True:
+            if token == 'IDENTIFICADOR':
+                fator(i_lexemas)
+            elif token == 'NUMERO':
+                fator(i_lexemas)
+            elif token == 'ABRE_PARENTESES':
+                fator(i_lexemas)
+            elif token == 'PALAVRA RESERVADA NOT':
+                fator(i_lexemas)
+            elif token == 'OP_MULTIPLICACAO' or token == 'PALAVRA RESERVADA DIV' or token == 'PALAVRA RESERVADA AND':
+                fator(i_lexemas)
+            else:
+                token, i_lexemas = obter_token(i_lexemas)
 
     elif tipo == 'VARIAVEL':
         token, i_lexemas = obter_token(index)
+        while True:
+            if token == 'IDENTIFICADOR':
+                fator(i_lexemas)
+            elif token == 'NUMERO':
+                fator(i_lexemas)
+            elif token == 'ABRE_PARENTESES':
+                fator(i_lexemas)
+            elif token == 'PALAVRA RESERVADA NOT':
+                fator(i_lexemas)
+            elif token == 'OP_MULTIPLICACAO' or token == 'PALAVRA RESERVADA DIV' or token == 'PALAVRA RESERVADA AND':
+                fator(i_lexemas)
+            elif token == '2P_IGUAL':
+                expressao(i_lexemas)
+            else:
+                token, i_lexemas = obter_token(i_lexemas)
 
 
 
