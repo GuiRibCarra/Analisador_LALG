@@ -432,24 +432,22 @@ def program(index):
                 bloco_(i_lexemas)
             else:
                 sintatico.insert(END,'Falta o ;')
-                bloco_(i_lexemas-1)
+                sinc(i_lexemas,'PROGRAM')
         else:
             sintatico.insert(END,'Falta o Identificador')
-            bloco_(i_lexemas)
+            sinc(i_lexemas,'PROGRAM')
     else:
         sintatico.insert(END,'Falta o "program" ')
-        bloco_(i_lexemas+1)
+        sinc(i_lexemas,'PROGRAM')
 
 def bloco_(index):
     token,i_lexemas = obter_token(index)
     if token == 'PALAVRA RESERVADA INT' or token == 'PALAVRA RESERVADA BOOLEAN':
         i_lexemas = parte_declaracao_variaveis(i_lexemas-1)
-    if token == 'PALAVRA RESERVADA PROCEDURE':
+    elif token == 'PALAVRA RESERVADA PROCEDURE':
         i_lexemas = parte_de_declaracao_de_subrotina(i_lexemas - 1)
     i_lexemas = comando_composto(i_lexemas)
     return i_lexemas
-
-
 
 def lista_de_identificadores(index):
     token,i_lexemas = obter_token(index)
@@ -465,9 +463,10 @@ def lista_de_identificadores(index):
                             break
                     elif token == 'OP_VIRGULA':
                         sintatico.insert(END,'Falta um Identificador entre as virgulas')
-                        token,i_lexemas = obter_token(i_lexemas)
+                        sinc(i_lexemas,'LISTA IDENTIFICADORES')
                     else:
                         sintatico.insert(END,'Nao terminou com um identificador')
+                        sinc(i_lexemas, 'LISTA IDENTIFICADORES')
                         break
                 elif token == 'IDENTIFICADOR':
                     token2,i_lexemas2 = obter_token(i_lexemas-2)
@@ -475,7 +474,7 @@ def lista_de_identificadores(index):
                         token, i_lexemas = obter_token(i_lexemas)
                     else:
                         sintatico.insert(END,'Falta uma virgula entre os identificadores')
-                        token,i_lexemas = obter_token(i_lexemas)
+                        sinc(i_lexemas,'LISTA IDENTIFICADORES')
 
                     if token != 'OP_VIRGULA' and token != 'IDENTIFICADOR':
                         break
@@ -487,6 +486,7 @@ def declaracao_variaveis(index):
         i_lexemas = lista_de_identificadores(i_lexemas)
     else:
         sintatico.insert(END,'tipo nao suportado')
+        sinc(i_lexemas, 'DECLARAÇÃO VARIAVEIS')
     return i_lexemas
 
 def parte_declaracao_variaveis(index):
@@ -499,6 +499,9 @@ def parte_declaracao_variaveis(index):
             token2,i_lexemas2 = obter_token(i_lexemas)
             if token2 != 'PALAVRA RESERVADA INT' and token != 'PALAVRA RESERVADA BOOLEAN':
                 break
+        else:
+            sintatico.insert(END,'Falta o ";"')
+            sinc(i_lexemas, 'PARTE DECLARAÇÃO VARIAVEIS')
     return i_lexemas
                 
 def secao_de_parametros_formais(index):
@@ -512,8 +515,10 @@ def secao_de_parametros_formais(index):
                 return i_lexemas
             else:
                 sintatico.insert(END, 'Falta o identificador final')
+                sinc(i_lexemas, 'SECAO PARAMETROS FORMAIS')
         else:
             sintatico.insert(END, 'Falta o ":" ')
+            sinc(i_lexemas, 'SECAO PARAMETROS FORMAIS')
             return i_lexemas+1
     else:
         i_lexemas = lista_de_identificadores(i_lexemas-1)
@@ -539,12 +544,15 @@ def parametros_formais(index):
                     break
             else:
                 sintatico.insert(END, 'Falta o ";" ')
+                sinc(i_lexemas, 'PARAMETROS FORMAIS')
         if token == 'FECHA_PARENTESES':
             return i_lexemas
         else:
             sintatico.insert(END, 'Falta o ")" ')
+            sinc(i_lexemas, 'PARAMETROS FORMAIS')
     else:
         sintatico.insert(END, 'Falta o "(" ')
+        sinc(i_lexemas, 'PARAMETROS FORMAIS')
     return i_lexemas
 
 def declaracao_de_procedimento(index):
@@ -564,8 +572,13 @@ def declaracao_de_procedimento(index):
                 i_lexemas = bloco_(i_lexemas)
             else:
                 sintatico.insert(END, 'Falta o ";" ')
+                sinc(i_lexemas, 'DECLARACAO DE PROCEDIMENTO')
         else:
             sintatico.insert(END, 'Falta o identificador ')
+            sinc(i_lexemas, 'DECLARACAO DE PROCEDIMENTO')
+    else:
+        sintatico.insert(END, 'Falta a palavra "procedure"')
+        sinc(i_lexemas, 'DECLARACAO DE PROCEDIMENTO')
 
     return i_lexemas
 
@@ -584,6 +597,12 @@ def parte_de_declaracao_de_subrotina(index):
                         break
                     else:
                         token, i_lexemas = obter_token(i_lexemas)
+                else:
+                    sintatico.insert(END, 'Falta o ";"')
+                    sinc(i_lexemas, 'PARTE DECLARAÇÃO ROTINAS')
+            else:
+                sintatico.insert(END, 'Falta a palavra "procedure"')
+                sinc(i_lexemas, 'PARTE DECLARAÇÃO ROTINAS')
         return i_lexemas
 
 def relacao(index):
@@ -614,10 +633,12 @@ def variavel(index):
                 return i_lexemas
             else:
                 sintatico.insert(END, 'Falta o "]" ')
+                sinc(i_lexemas, 'VARIAVEL')
         else:
             return i_lexemas
     else:
         sintatico.insert(END, 'Falta o identificador ')
+        sinc(i_lexemas, 'VARIAVEL')
     return i_lexemas
 
 def fator(index):
@@ -634,11 +655,13 @@ def fator(index):
             return i_lexemas
         else:
             sintatico.insert(END, 'Falta o ")" ')
+            sinc(i_lexemas, 'FATOR')
     elif token == 'PALAVRA RESERVADA NOT':
         fator(i_lexemas)
         return i_lexemas
     else:
         sintatico.insert(END, 'Falta o fator corretamente ')
+        sinc(i_lexemas, 'FATOR')
     return i_lexemas
 
 def termo(index):
@@ -703,7 +726,7 @@ def atribuicao(index):
         return i_lexemas
     else:
         sintatico.insert(END, 'Falta o := ')
-        i_lexemas = expressao(i_lexemas+1)
+        sinc(i_lexemas, 'ATRIBUIÇÃO')
         return i_lexemas
 
 def chamada_de_procedimento(index):
@@ -717,9 +740,11 @@ def chamada_de_procedimento(index):
                 return i_lexemas
             else:
                 sintatico.insert(END, 'Falta fechar o parenteses')
+                sinc(i_lexemas, 'DECLARAÇÃO DE PROCEDIMENTO')
                 return i_lexemas
     else:
         sintatico.insert(END, 'Esta faltando o identificador')
+        sinc(i_lexemas, 'DECLARAÇÃO DE PROCEDIMENTO')
         token, i_lexemas = obter_token(i_lexemas)
         if token == 'ABRE_PARENTESES':
             i_lexemas = lista_expressao(i_lexemas)
@@ -728,6 +753,7 @@ def chamada_de_procedimento(index):
                 return i_lexemas
             else:
                 sintatico.insert(END, 'Falta fechar o parenteses')
+                sinc(i_lexemas, 'DECLARAÇÃO DE PROCEDIMENTO')
         return i_lexemas
 
 def IF(index):
@@ -743,6 +769,7 @@ def IF(index):
             return i_lexemas
         else:
             sintatico.insert(END, 'Falta o THEN')
+            sinc(i_lexemas, 'IF')
             i_lexemas = comando(i_lexemas)
             token, i_lexemas = obter_token(i_lexemas)
             if token == 'PALAVRA RESERVADA ELSE':
@@ -750,6 +777,7 @@ def IF(index):
             return i_lexemas
     else:
         sintatico.insert(END, 'Falta o IF')
+        sinc(i_lexemas, 'IF')
 
     return i_lexemas
 
@@ -762,8 +790,10 @@ def WHILE(index):
             i_lexemas = comando(i_lexemas)
         else:
             sintatico.insert(END, 'Falta o DO')
+            sinc(i_lexemas, 'WHILE')
     else:
         sintatico.insert(END, 'Falta o While')
+        sinc(i_lexemas, 'WHILE')
 
 def comando(index):
     token,i_lexemas = obter_token(index)
@@ -796,6 +826,7 @@ def comando_composto(index):
             return i_lexemas
         else:
             sintatico.insert(END, 'Falta o END')
+            sinc(i_lexemas, 'COMANDO COMPOSTO')
             return i_lexemas
 
 def sinc(index,tipo):
@@ -1126,8 +1157,6 @@ def sinc(index,tipo):
                 expressao(i_lexemas)
             else:
                 token, i_lexemas = obter_token(i_lexemas)
-
-
 
 
 #------------------------------------------ INTERFACE ------------------------------------------------------------------
