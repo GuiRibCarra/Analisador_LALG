@@ -263,13 +263,14 @@ def especiais(texto,posicao):
 
 def limpar_sintatico():
     sintatico.delete(0,END)
-    semantico.delete(0, END)
+
 
 def imprimirAnalise():
     tabela.delete(0,END)
     tabela2.delete(0, END)
     tabela3.delete(0, END)
     limpar_sintatico()
+    semantico.delete(0, END)
     inicia_tab()
     texto = bloco.get('1.0',END)
     terminou = False
@@ -412,7 +413,6 @@ def imprimirAnalise():
                         for k in range(len(identificadores)):
                             if identificadores[k][0]  ==  lexemas[j][1]:
                                 if identificadores[k][1]  ==  lexemas[i][0][18:]:
-                                    print(f'possui 2 variaveis com o mesmo nome "{identificadores[k][0]}"')
                                     break
                                 else:
                                     identificadores[k][1] = lexemas[i][0][18:]

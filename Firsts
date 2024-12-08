@@ -1,0 +1,40 @@
+PR = Palavra Reservada
+
+Program
+PR_program -> Identificador -> OP_Ponto_e_virgula
+
+Declaração variaveis
+PR_Tipo -> loop(Identificador -> OP_Virgula) -> OP_Ponto_e_virgula
+PR_Var -> loop(Identificador -> OP_Virgula) -> OP_2Pontos -> PR_Tipo
+
+Atribuição:
+Identificador -> OP_2Pontos -> OP_Igual -> Numero || Operação || Identificador || PR_False || PR_True -> OP_Ponto_e_virgula
+
+Procedure
+PR_procedure -> Identificador -> OP_Abre_Parenteses -> Declaração variaveis -> OP_Fecha_Parenteses -> OP_Ponto_e_virgula
+
+Bloco
+PR_Begin -> Ações -> PR_End -> OP_Ponto_e_Virgula
+
+IF
+PR_If -> OP_Abre_Parenteses -> Expressao -> OP_Fecha_Parenteses -> PR_Then -> Comando [-> PR_Else -> Comando]
+
+Expressao:
+Identificador -> OP_Maior -> Identificador || Numero
+Identificador -> OP_Menor -> Identificador || Numero
+Identificador -> OP_Maior_Igual -> Identificador || Numero
+Identificador -> OP_Menor_Igual -> Identificador || Numero
+Identificador -> OP_Igual -> OP_Igual -> Identificador || Numero
+Identificador
+
+Numero:
+Digito->[loop(Digito)]
+
+Digito:
+0 || 1 || 2 || 3 || 4 || 5 || 6 || 7 || 8 || 9
+
+Identificador:
+Letra -> [Letra || Digito]
+
+Letra:
+_ || a-z || A-Z
