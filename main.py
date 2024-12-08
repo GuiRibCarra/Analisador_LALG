@@ -453,7 +453,7 @@ def analise_semantica():
 
                 todos_iguais = all(x == identificadores[j][1] for x in tipos)
                 if not todos_iguais:
-                    semantico.insert(END,f"Erro na expressao {expressoes[i][0]}:={expressoes[i][1]}")
+                    semantico.insert(END, f"Erro na expressao {expressoes[i][0]}:={expressoes[i][1]}")
 
 
 def atualiza_linha(event):
