@@ -400,7 +400,6 @@ def imprimirAnalise():
                     for k in range(len(identificadores)):
                         if identificadores[k][0]  ==  lexemas[j][1]:
                             if identificadores[k][1]  ==  lexemas[i][0][18:]:
-                                print(f'possui 2 variaveis com o mesmo nome "{identificadores[k][0]}"')
                                 break
                             else:
                                 identificadores[k][1] = lexemas[i][0][18:]
@@ -433,11 +432,8 @@ def imprimirAnalise():
         if identificadores[i][1] == 'NULL':
             pops.append(i)
     identificadores = [x for i,x in enumerate(identificadores) if i not in pops]
-    print(expressoes)
-    print(identificadores)
-    print(lexemas)
     analise_semantica()
-    #program()
+    program()
     lexemas.clear()
 
 def analise_semantica():
