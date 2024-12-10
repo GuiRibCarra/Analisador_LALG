@@ -264,13 +264,15 @@ def especiais(texto,posicao):
 def limpar_sintatico():
     sintatico.delete(0,END)
 
+def limpar_semantico():
+    semantico.delete(0, END)
 
 def imprimirAnalise():
     tabela.delete(0,END)
     tabela2.delete(0, END)
     tabela3.delete(0, END)
     limpar_sintatico()
-    semantico.delete(0, END)
+    limpar_semantico()
     inicia_tab()
     texto = bloco.get('1.0',END)
     termoinou = False
