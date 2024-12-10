@@ -427,6 +427,12 @@ def imprimirAnalise():
                     aux.append(lexemas[j][1])
                 j += 1
             expressoes.append([lexemas[i][1], aux])
+        elif lexemas[i][0] == 'IDENTIFICADOR' and lexemas[i + 1][0] in ["MAIOR",'MAIOR_IGUAL', 'MENOR','MENOR_IGUAL','MENOR_MAIOR']:
+            aux = []
+            if (lexemas[i+2][0] == 'IDENTIFICADOR' or lexemas[i+2][0] == 'NUMERO_INTEIRO' or
+                    lexemas[i+2][0] == 'PALAVRA RESERVADA FALSE' or lexemas[i+2][0] == 'PALAVRA RESERVADA TRUE'):
+                aux.append(lexemas[i+2][1])
+            expressoes.append([lexemas[i][1], aux])
     pops = []
     for i in range(len(identificadores)):
         if identificadores[i][1] == 'NULL':
