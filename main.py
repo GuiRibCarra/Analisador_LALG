@@ -463,7 +463,6 @@ def analise_semantica():
                 if not todos_iguais:
                     semantico.insert(END, f"Erro na expressao {expressoes[i][0]}:={expressoes[i][1]}")
 
-
 def atualiza_linha(event):
     texto = bloco.get('0.0',END)
     numeros_l.config(state='normal')
@@ -495,14 +494,12 @@ def obter_token():
     token = lexemas[i_lexemas]
     i_lexemas += 1
 
-
 def obter_token2():
     global i_lexemas, token2
     token2 = lexemas[i_lexemas+1]
 
 def program():
     global token
-    print('passei program')
     obter_token()
     if token[0]  ==  'PALAVRA RESERVADA PROGRAM':
         obter_token()
