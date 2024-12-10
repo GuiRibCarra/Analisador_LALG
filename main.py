@@ -273,12 +273,12 @@ def imprimirAnalise():
     semantico.delete(0, END)
     inicia_tab()
     texto = bloco.get('1.0',END)
-    terminou = False
+    termoinou = False
     i = 0
     linha = 1
-    while terminou  ==  False:
+    while termoinou  ==  False:
         if i  ==  len(texto):
-            terminou = True
+            termoinou = True
             break
         if texto[i]  ==  ' ':
             i = i + 1
@@ -513,10 +513,10 @@ def program():
                 while token[0]in ('PALAVRA RESERVADA INT', 'PALAVRA RESERVADA BOOLEAN', 'PALAVRA RESERVADA PROCEDURE',
                                 'PALAVRA RESERVADA BEGIN'):
                     if token[0] ==  'PALAVRA RESERVADA INT' or token[0] ==  'PALAVRA RESERVADA BOOLEAN':
-                        variable_declaring()
+                        declaracao_variaveis()
                         obter_token()
                     elif token[0] ==  'PALAVRA RESERVADA PROCEDURE':
-                        procedure_declaration()
+                        declaracao_procedure()
                         obter_token()
                     elif token[0] ==  'PALAVRA RESERVADA BEGIN':
                         execucao()
@@ -549,21 +549,21 @@ def comando():
     global token
     obter_token()
     if token[0] ==  'PALAVRA RESERVADA INT' or token[0] ==  'PALAVRA RESERVADA BOOLEAN':
-        variable_declaring()
+        declaracao_variaveis()
     elif token[0] ==  'PALAVRA RESERVADA IF':
-        conditional_statement()
+        condicionais()
     elif token[0] ==  'IDENTIFIER':
         obter_token2()
         if token2[0]  ==  '2P_IGUAL':
-            variable_assignment()
+            atribuicao_var()
         elif token2[0]  ==  'ABRE_PARENTESES':
-            procedure_call()
+            procedure()
         else:
             sintatico.insert(END, 'Apos o Identificador necessita ser ":=" ou "(" ')
     else:
         sintatico.insert(END, 'Necessita ter "int", "boolean", "if" ou "Identificador" ')
 
-def variable_declaring():
+def declaracao_variaveis():
     global token
     variaveis = []
     while True:
@@ -584,7 +584,7 @@ def variable_declaring():
     if token[0]!= 'OP_VIRGULA':
         sintatico.insert(END, 'Falta o ";"')
 
-def variable_assignment():
+def atribuicao_var():
     global token
     obter_token()
     if token[0] ==  'IDENTIFICADOR':
@@ -595,45 +595,45 @@ def variable_assignment():
         sintatico.insert(END, 'Falta o ":=" ')
 
 
-    assigned_type = evaluate_expression()
+    assigned_type = avaliacao_exp()
 
     obter_token()
     if token[0] != 'OP_VIRGULA':
         sintatico.insert(END, 'Falta o ";"')
 
 
-def evaluate_expression():
+def avaliacao_exp():
     global token
-    # Começa avaliando o primeiro termo
-    result_type = evaluate_term()
+    # Começa avaliando o primeiro termoo
+    result_type = avaliacao_termoo()
     obter_token()
     # Avalia operadores de soma/subtração
     while token[0]  ==  'OP_SOMA' or token[0]  ==  'OP_SUBTRACAO':
-        term_type = evaluate_term()
+        termo_type = avaliacao_termoo()
 
         # Verifica a compatibilidade dos tipos
-        if result_type != term_type:
-            sintatico.insert(END,f"Type mismatch in operation: '{result_type}' and '{term_type}' are incompatible.")
+        if result_type != termo_type:
+            sintatico.insert(END,f"Type mismatch in operation: '{result_type}' and '{termo_type}' are incompatible.")
         obter_token()
 
     return result_type
 
-def evaluate_term():
+def avaliacao_termoo():
     global token
     # Começa avaliando o primeiro fator
-    result_type = evaluate_factor()
+    result_type = avaliacao_fator()
 
     # Avalia operadores de multiplicação/divisão
     while token[0] ==  'PALAVRA RESERVADA DIV' or token[0] ==  'OP_MULTIPLICACAO':
-        factor_type = evaluate_factor()
+        fator_type = avaliacao_fator()
 
         # Verifica a compatibilidade dos tipos
-        if result_type != factor_type:
-            sintatico.insert(END,f"Type mismatch in operation: '{result_type}' and '{factor_type}' are incompatible.")
+        if result_type != fator_type:
+            sintatico.insert(END,f"Type mismatch in operation: '{result_type}' and '{fator_type}' are incompatible.")
 
     return result_type
 
-def evaluate_factor():
+def avaliacao_fator():
     global token
     obter_token()
     if token[0] ==  'IDENTIFICADOR':
@@ -647,13 +647,13 @@ def evaluate_factor():
         return 'PALAVRA RESERVADA INT'
 
     elif token[0] ==  'ABRE_PARENTESES':
-        result_type = evaluate_expression()
+        result_type = avaliacao_exp()
         return result_type
 
     else:
-        sintatico.insert(END,f"Unexpected token[0]in factor: {token}")
+        sintatico.insert(END,f"Unexpected token[0]in fator: {token}")
 
-def procedure_call():
+def procedure():
     global token
     obter_token()
     if token[0] ==  'IDENTIFICADOR':
@@ -667,7 +667,7 @@ def procedure_call():
         sintatico.insert(END, 'Falta o "(" ')
         
     while token[0]!= 'FECHA_PARENTESES':
-        expression()
+        expressao()
         if token[0] ==  'OP_VIRGULA':
             obter_token()
 
@@ -680,45 +680,45 @@ def procedure_call():
     else:
         sintatico.insert(END, 'Falta o ";" ')
 
-def expression():
+def expressao():
     global token
     if token[0]in ['IDENTIFICADOR','PALAVRA RESERVADA INT','PALAVRA RESERVADA TRUE', 'PALAVRA RESERVADA FALSE']:
         obter_token()
     else:
-        sintatico.insert(END,f"Unexpected token[0]in expression: {token}")
+        sintatico.insert(END,f"Unexpected token[0]in expressao: {token}")
 
-def conditional_statement():
+def condicionais():
     global token
     obter_token()
     if token[0] ==  'PALAVRA RESERVADA IF':
-        boolean_expression()
+        exp_boolean()
         obter_token()
         if token[0] ==  'PALAVRA RESERVADA THEN':
             comando()
         if token[0] ==  'PALAVRA RESERVADA ELSE':
             comando()
 
-def boolean_expression():
+def exp_boolean():
     global token
-    term()
+    termo()
     while token[0]in ['MENOR', 'MAIOR','MENOR_IGUAL', 'MAIOR_IGUAL']:
         obter_token()
-        term()
+        termo()
 
-def term():
+def termo():
     global token
-    factor()
+    fator()
     while token[0] ==  'OP_SOMA' or token[0] ==  'OP_SUBTRACAO':
         obter_token()
-        factor()
+        fator()
 
-def factor():
+def fator():
     global token
     if token[0]in ['IDENTIFICADOR', 'PALAVRA RESERVADA INT']:
         obter_token()
     elif token[0] ==  'ABRE_PARENTESES':
         obter_token()
-        boolean_expression()
+        exp_boolean()
         if token[0] ==  'FECHA_PARENTESES':
             obter_token()
         else:
@@ -726,7 +726,7 @@ def factor():
     else:
         sintatico.insert(END,f'token[0]nao esperado em fator {token}')
 
-def procedure_declaration():
+def declaracao_procedure():
     global token
     if token[0] ==  'PALAVRA RESERVADA PROCEDURE':
         obter_token()
